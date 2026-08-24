@@ -79,7 +79,7 @@ int main(void)
 
   /* Configure the system clock */
   SystemClock_Config();
-
+  __HAL_RCC_GPIOD_CLK_ENABLE();
   /* USER CODE BEGIN SysInit */
 
   /* USER CODE END SysInit */
@@ -95,7 +95,16 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
+    // bat led pd 12 pd 15 
+    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12, GPIO_PIN_SET);
+    HAL_Delay(1000);
+    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12, GPIO_PIN_RESET);
+    HAL_Delay(1000);
 
+    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_15, GPIO_PIN_SET);
+    HAL_Delay(1000);
+    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_15, GPIO_PIN_RESET);
+    HAL_Delay(1000);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */

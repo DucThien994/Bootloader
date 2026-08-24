@@ -143,6 +143,7 @@ SECTIONS
     *(.data*)          /* .data* sections */
     *(.RamFunc)        /* .RamFunc sections */
     *(.RamFunc*)       /* .RamFunc* sections */
+    *(.Function_in_Ram)/* .Function_in_Ram sections*/
 
     . = ALIGN(4);
     _edata = .;        /* define a global symbol at data end */
