@@ -107,7 +107,7 @@ __attribute__((section(".Function_in_RAM"))) void flash_program(uint8_t* addr, u
         FLASH_KEYR = 0x45670123;   // KEY1
         FLASH_KEYR = 0xCDEF89AB;   // KEY2
     }
-
+    
     // 1. Đợi cho đến khi không còn hoạt động ghi nào đang diễn ra (BSY = 0)
     while (((FLASH_SR >> 16) & 1) == 1);
 
