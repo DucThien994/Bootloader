@@ -27,25 +27,25 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   ALLOC
  11 .ARM.attributes 00000030  00000000  00000000  00003234  2**0
                   CONTENTS, READONLY
- 12 .debug_info   00001454  00000000  00000000  00003264  2**0
+ 12 .debug_info   00001436  00000000  00000000  00003264  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 13 .debug_abbrev 0000066e  00000000  00000000  000046b8  2**0
+ 13 .debug_abbrev 0000066e  00000000  00000000  0000469a  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 14 .debug_aranges 00000228  00000000  00000000  00004d28  2**3
+ 14 .debug_aranges 00000228  00000000  00000000  00004d08  2**3
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 15 .debug_rnglists 00000186  00000000  00000000  00004f50  2**0
+ 15 .debug_rnglists 00000186  00000000  00000000  00004f30  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 16 .debug_macro  00014ba4  00000000  00000000  000050d6  2**0
+ 16 .debug_macro  00014b88  00000000  00000000  000050b6  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 17 .debug_line   00002722  00000000  00000000  00019c7a  2**0
+ 17 .debug_line   0000271f  00000000  00000000  00019c3e  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_str    00082f39  00000000  00000000  0001c39c  2**0
+ 18 .debug_str    00082f39  00000000  00000000  0001c35d  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .comment      00000043  00000000  00000000  0009f2d5  2**0
+ 19 .comment      00000043  00000000  00000000  0009f296  2**0
                   CONTENTS, READONLY
- 20 .debug_frame  00000be8  00000000  00000000  0009f318  2**2
+ 20 .debug_frame  00000be8  00000000  00000000  0009f2dc  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 21 .debug_line_str 00000061  00000000  00000000  0009ff00  2**0
+ 21 .debug_line_str 00000061  00000000  00000000  0009fec4  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -148,18 +148,18 @@ Disassembly of section .text:
  800028e:	bf00      	nop
 
 08000290 <usart1_send>:
-#define RX_BUFFER_SIZE  (32 * 1024)
-uint8_t rx_buf[RX_BUFFER_SIZE];
-volatile uint32_t received_fw_size = 0;
-volatile uint8_t receive_new_fw = 0;
-void usart1_send(char data)
-{
+ #define RX_BUFFER_SIZE  (32 * 1024)
+ uint8_t rx_buf[RX_BUFFER_SIZE];
+ volatile uint32_t received_fw_size = 0;
+ volatile uint8_t receive_new_fw = 0;
+ void usart1_send(char data)
+ {
  8000290:	b480      	push	{r7}
  8000292:	b083      	sub	sp, #12
  8000294:	af00      	add	r7, sp, #0
  8000296:	4603      	mov	r3, r0
  8000298:	71fb      	strb	r3, [r7, #7]
-    while (((USART1_SR >> 7) & 1) == 0); // Chờ TXE = 1
+     while (((USART1_SR >> 7) & 1) == 0); // Chờ TXE = 1
  800029a:	bf00      	nop
  800029c:	4b07      	ldr	r3, [pc, #28]	@ (80002bc <usart1_send+0x2c>)
  800029e:	681b      	ldr	r3, [r3, #0]
@@ -167,11 +167,11 @@ void usart1_send(char data)
  80002a2:	f003 0301 	and.w	r3, r3, #1
  80002a6:	2b00      	cmp	r3, #0
  80002a8:	d0f8      	beq.n	800029c <usart1_send+0xc>
-    USART1_DR = (data & 0xFF);
+     USART1_DR = (data & 0xFF);
  80002aa:	4a05      	ldr	r2, [pc, #20]	@ (80002c0 <usart1_send+0x30>)
  80002ac:	79fb      	ldrb	r3, [r7, #7]
  80002ae:	6013      	str	r3, [r2, #0]
-}
+ }
  80002b0:	bf00      	nop
  80002b2:	370c      	adds	r7, #12
  80002b4:	46bd      	mov	sp, r7
@@ -182,46 +182,46 @@ void usart1_send(char data)
 
 080002c4 <my_printf>:
 
-void my_printf(char* str, ...)
-{
+ void my_printf(char* str, ...)
+ {
  80002c4:	b40f      	push	{r0, r1, r2, r3}
  80002c6:	b580      	push	{r7, lr}
  80002c8:	b0a4      	sub	sp, #144	@ 0x90
  80002ca:	af00      	add	r7, sp, #0
-    va_list list;
-    va_start(list, str);
+     va_list list;
+     va_start(list, str);
  80002cc:	f107 039c 	add.w	r3, r7, #156	@ 0x9c
  80002d0:	f8c7 3084 	str.w	r3, [r7, #132]	@ 0x84
-    char print_buf[128] = {0};
+     char print_buf[128] = {0};
  80002d4:	1d3b      	adds	r3, r7, #4
  80002d6:	2280      	movs	r2, #128	@ 0x80
  80002d8:	2100      	movs	r1, #0
  80002da:	4618      	mov	r0, r3
  80002dc:	f000 fa48 	bl	8000770 <memset>
-    vsnprintf(print_buf, sizeof(print_buf), str, list);
+     vsnprintf(print_buf, sizeof(print_buf), str, list);
  80002e0:	1d38      	adds	r0, r7, #4
  80002e2:	f8d7 3084 	ldr.w	r3, [r7, #132]	@ 0x84
  80002e6:	f8d7 2098 	ldr.w	r2, [r7, #152]	@ 0x98
  80002ea:	2180      	movs	r1, #128	@ 0x80
  80002ec:	f000 fa32 	bl	8000754 <vsniprintf>
-    int len = strlen(print_buf);
+     int len = strlen(print_buf);
  80002f0:	1d3b      	adds	r3, r7, #4
  80002f2:	4618      	mov	r0, r3
  80002f4:	f7ff ff74 	bl	80001e0 <strlen>
  80002f8:	4603      	mov	r3, r0
  80002fa:	f8c7 3088 	str.w	r3, [r7, #136]	@ 0x88
-    for (int i = 0; i < len; i++) {
+     for (int i = 0; i < len; i++) {
  80002fe:	2300      	movs	r3, #0
  8000300:	f8c7 308c 	str.w	r3, [r7, #140]	@ 0x8c
  8000304:	e00c      	b.n	8000320 <my_printf+0x5c>
-        usart1_send(print_buf[i]);
+         usart1_send(print_buf[i]);
  8000306:	1d3a      	adds	r2, r7, #4
  8000308:	f8d7 308c 	ldr.w	r3, [r7, #140]	@ 0x8c
  800030c:	4413      	add	r3, r2
  800030e:	781b      	ldrb	r3, [r3, #0]
  8000310:	4618      	mov	r0, r3
  8000312:	f7ff ffbd 	bl	8000290 <usart1_send>
-    for (int i = 0; i < len; i++) {
+     for (int i = 0; i < len; i++) {
  8000316:	f8d7 308c 	ldr.w	r3, [r7, #140]	@ 0x8c
  800031a:	3301      	adds	r3, #1
  800031c:	f8c7 308c 	str.w	r3, [r7, #140]	@ 0x8c
@@ -229,9 +229,9 @@ void my_printf(char* str, ...)
  8000324:	f8d7 3088 	ldr.w	r3, [r7, #136]	@ 0x88
  8000328:	429a      	cmp	r2, r3
  800032a:	dbec      	blt.n	8000306 <my_printf+0x42>
-    }
-    va_end(list);
-}
+     }
+     va_end(list);
+ }
  800032c:	bf00      	nop
  800032e:	bf00      	nop
  8000330:	3790      	adds	r7, #144	@ 0x90
@@ -241,93 +241,93 @@ void my_printf(char* str, ...)
  800033a:	4770      	bx	lr
 
 0800033c <USART1_Config>:
-void USART1_Config(void)
-{
+ void USART1_Config(void)
+ {
  800033c:	b480      	push	{r7}
  800033e:	b083      	sub	sp, #12
  8000340:	af00      	add	r7, sp, #0
-    // Bật clock GPIOB và USART1
-    RCC_AHB1ENR |= (1 << 1);
+     // Bật clock GPIOB và USART1
+     RCC_AHB1ENR |= (1 << 1);
  8000342:	4b27      	ldr	r3, [pc, #156]	@ (80003e0 <USART1_Config+0xa4>)
  8000344:	681b      	ldr	r3, [r3, #0]
  8000346:	4a26      	ldr	r2, [pc, #152]	@ (80003e0 <USART1_Config+0xa4>)
  8000348:	f043 0302 	orr.w	r3, r3, #2
  800034c:	6013      	str	r3, [r2, #0]
-    RCC_APB2ENR |= (1 << 4);
+     RCC_APB2ENR |= (1 << 4);
  800034e:	4b25      	ldr	r3, [pc, #148]	@ (80003e4 <USART1_Config+0xa8>)
  8000350:	681b      	ldr	r3, [r3, #0]
  8000352:	4a24      	ldr	r2, [pc, #144]	@ (80003e4 <USART1_Config+0xa8>)
  8000354:	f043 0310 	orr.w	r3, r3, #16
  8000358:	6013      	str	r3, [r2, #0]
-    // Cấu hình PB6 (TX), PB7 (RX) AF7
-    GPIOB_MODER &= ~((0x3 << 12) | (0x3 << 14));
+     // Cấu hình PB6 (TX), PB7 (RX) AF7
+     GPIOB_MODER &= ~((0x3 << 12) | (0x3 << 14));
  800035a:	4b23      	ldr	r3, [pc, #140]	@ (80003e8 <USART1_Config+0xac>)
  800035c:	681b      	ldr	r3, [r3, #0]
  800035e:	4a22      	ldr	r2, [pc, #136]	@ (80003e8 <USART1_Config+0xac>)
  8000360:	f423 4370 	bic.w	r3, r3, #61440	@ 0xf000
  8000364:	6013      	str	r3, [r2, #0]
-    GPIOB_MODER |=  ((0x2 << 12) | (0x2 << 14));
+     GPIOB_MODER |=  ((0x2 << 12) | (0x2 << 14));
  8000366:	4b20      	ldr	r3, [pc, #128]	@ (80003e8 <USART1_Config+0xac>)
  8000368:	681b      	ldr	r3, [r3, #0]
  800036a:	4a1f      	ldr	r2, [pc, #124]	@ (80003e8 <USART1_Config+0xac>)
  800036c:	f443 4320 	orr.w	r3, r3, #40960	@ 0xa000
  8000370:	6013      	str	r3, [r2, #0]
-    GPIOB_AFRL  &= ~((0xF << 24) | (0xF << 28));
+     GPIOB_AFRL  &= ~((0xF << 24) | (0xF << 28));
  8000372:	4b1e      	ldr	r3, [pc, #120]	@ (80003ec <USART1_Config+0xb0>)
  8000374:	681b      	ldr	r3, [r3, #0]
  8000376:	4a1d      	ldr	r2, [pc, #116]	@ (80003ec <USART1_Config+0xb0>)
  8000378:	f023 437f 	bic.w	r3, r3, #4278190080	@ 0xff000000
  800037c:	6013      	str	r3, [r2, #0]
-    GPIOB_AFRL  |=  ((0x7 << 24) | (0x7 << 28));
+     GPIOB_AFRL  |=  ((0x7 << 24) | (0x7 << 28));
  800037e:	4b1b      	ldr	r3, [pc, #108]	@ (80003ec <USART1_Config+0xb0>)
  8000380:	681b      	ldr	r3, [r3, #0]
  8000382:	4a1a      	ldr	r2, [pc, #104]	@ (80003ec <USART1_Config+0xb0>)
  8000384:	f043 43ee 	orr.w	r3, r3, #1996488704	@ 0x77000000
  8000388:	6013      	str	r3, [r2, #0]
-    GPIOB_OSPEEDR |= ((0x3 << 12) | (0x3 << 14));
+     GPIOB_OSPEEDR |= ((0x3 << 12) | (0x3 << 14));
  800038a:	4b19      	ldr	r3, [pc, #100]	@ (80003f0 <USART1_Config+0xb4>)
  800038c:	681b      	ldr	r3, [r3, #0]
  800038e:	4a18      	ldr	r2, [pc, #96]	@ (80003f0 <USART1_Config+0xb4>)
  8000390:	f443 4370 	orr.w	r3, r3, #61440	@ 0xf000
  8000394:	6013      	str	r3, [r2, #0]
-    GPIOB_PUPDR &= ~((0x3 << 12) | (0x3 << 14));
+     GPIOB_PUPDR &= ~((0x3 << 12) | (0x3 << 14));
  8000396:	4b17      	ldr	r3, [pc, #92]	@ (80003f4 <USART1_Config+0xb8>)
  8000398:	681b      	ldr	r3, [r3, #0]
  800039a:	4a16      	ldr	r2, [pc, #88]	@ (80003f4 <USART1_Config+0xb8>)
  800039c:	f423 4370 	bic.w	r3, r3, #61440	@ 0xf000
  80003a0:	6013      	str	r3, [r2, #0]
-    GPIOB_PUPDR |=  ((0x1 << 12) | (0x1 << 14));
+     GPIOB_PUPDR |=  ((0x1 << 12) | (0x1 << 14));
  80003a2:	4b14      	ldr	r3, [pc, #80]	@ (80003f4 <USART1_Config+0xb8>)
  80003a4:	681b      	ldr	r3, [r3, #0]
  80003a6:	4a13      	ldr	r2, [pc, #76]	@ (80003f4 <USART1_Config+0xb8>)
  80003a8:	f443 43a0 	orr.w	r3, r3, #20480	@ 0x5000
  80003ac:	6013      	str	r3, [r2, #0]
-    // Baudrate 115200 @ 16MHz HSI: USARTDIV = 16000000 / (16 * 115200) = 8.6875 -> Mantissa = 8, Fraction = 11 (0x8B)
-    // Nếu dùng 9600 baud @ 16MHz: 0x683
-    USART1_BRR = 0x8B;
+     // Baudrate 115200 @ 16MHz HSI: USARTDIV = 16000000 / (16 * 115200) = 8.6875 -> Mantissa = 8, Fraction = 11 (0x8B)
+     // Nếu dùng 9600 baud @ 16MHz: 0x683
+     USART1_BRR = 0x8B;
  80003ae:	4b12      	ldr	r3, [pc, #72]	@ (80003f8 <USART1_Config+0xbc>)
  80003b0:	228b      	movs	r2, #139	@ 0x8b
  80003b2:	601a      	str	r2, [r3, #0]
-    // Bật USART, TE, RE, IDLEIE
-    USART1_CR1 = (1 << 13) | (1 << 3) | (1 << 2) | (1 << 4);
+     // Bật USART, TE, RE, IDLEIE
+     USART1_CR1 = (1 << 13) | (1 << 3) | (1 << 2) | (1 << 4);
  80003b4:	4b11      	ldr	r3, [pc, #68]	@ (80003fc <USART1_Config+0xc0>)
  80003b6:	f242 021c 	movw	r2, #8220	@ 0x201c
  80003ba:	601a      	str	r2, [r3, #0]
-    USART1_CR3 = (1 << 6); // DMAR
+     USART1_CR3 = (1 << 6); // DMAR
  80003bc:	4b10      	ldr	r3, [pc, #64]	@ (8000400 <USART1_Config+0xc4>)
  80003be:	2240      	movs	r2, #64	@ 0x40
  80003c0:	601a      	str	r2, [r3, #0]
-    // Bật NVIC IRQ 37 (USART1)
-    uint32_t* ISER1 = (uint32_t*)0xE000E104;
+     // Bật NVIC IRQ 37 (USART1)
+     uint32_t* ISER1 = (uint32_t*)0xE000E104;
  80003c2:	4b10      	ldr	r3, [pc, #64]	@ (8000404 <USART1_Config+0xc8>)
  80003c4:	607b      	str	r3, [r7, #4]
-    *ISER1 |= (1 << (37 - 32));
+     *ISER1 |= (1 << (37 - 32));
  80003c6:	687b      	ldr	r3, [r7, #4]
  80003c8:	681b      	ldr	r3, [r3, #0]
  80003ca:	f043 0220 	orr.w	r2, r3, #32
  80003ce:	687b      	ldr	r3, [r7, #4]
  80003d0:	601a      	str	r2, [r3, #0]
-}
+ }
  80003d2:	bf00      	nop
  80003d4:	370c      	adds	r7, #12
  80003d6:	46bd      	mov	sp, r7
@@ -346,56 +346,56 @@ void USART1_Config(void)
  8000404:	e000e104 	.word	0xe000e104
 
 08000408 <DMA_Init>:
-void DMA_Init(void)
-{
+ void DMA_Init(void)
+ {
  8000408:	b480      	push	{r7}
  800040a:	b083      	sub	sp, #12
  800040c:	af00      	add	r7, sp, #0
-    RCC_AHB1ENR |= (1 << 22);
+     RCC_AHB1ENR |= (1 << 22);
  800040e:	4b17      	ldr	r3, [pc, #92]	@ (800046c <DMA_Init+0x64>)
  8000410:	681b      	ldr	r3, [r3, #0]
  8000412:	4a16      	ldr	r2, [pc, #88]	@ (800046c <DMA_Init+0x64>)
  8000414:	f443 0380 	orr.w	r3, r3, #4194304	@ 0x400000
  8000418:	6013      	str	r3, [r2, #0]
-    DMA2_S2CR &= ~(1 << 0);
+     DMA2_S2CR &= ~(1 << 0);
  800041a:	4b15      	ldr	r3, [pc, #84]	@ (8000470 <DMA_Init+0x68>)
  800041c:	681b      	ldr	r3, [r3, #0]
  800041e:	4a14      	ldr	r2, [pc, #80]	@ (8000470 <DMA_Init+0x68>)
  8000420:	f023 0301 	bic.w	r3, r3, #1
  8000424:	6013      	str	r3, [r2, #0]
-    while ((DMA2_S2CR & (1 << 0)) != 0);
+     while ((DMA2_S2CR & (1 << 0)) != 0);
  8000426:	bf00      	nop
  8000428:	4b11      	ldr	r3, [pc, #68]	@ (8000470 <DMA_Init+0x68>)
  800042a:	681b      	ldr	r3, [r3, #0]
  800042c:	f003 0301 	and.w	r3, r3, #1
  8000430:	2b00      	cmp	r3, #0
  8000432:	d1f9      	bne.n	8000428 <DMA_Init+0x20>
-    uint32_t* DMA_LIFCR = (uint32_t*)(DMA2_BASE_ADDR + 0x08);
+     uint32_t* DMA_LIFCR = (uint32_t*)(DMA2_BASE_ADDR + 0x08);
  8000434:	4b0f      	ldr	r3, [pc, #60]	@ (8000474 <DMA_Init+0x6c>)
  8000436:	607b      	str	r3, [r7, #4]
-    *DMA_LIFCR |= (0x3D << 16);
+     *DMA_LIFCR |= (0x3D << 16);
  8000438:	687b      	ldr	r3, [r7, #4]
  800043a:	681b      	ldr	r3, [r3, #0]
  800043c:	f443 1274 	orr.w	r2, r3, #3997696	@ 0x3d0000
  8000440:	687b      	ldr	r3, [r7, #4]
  8000442:	601a      	str	r2, [r3, #0]
-    DMA2_S2PAR  = (uint32_t)(USART1_BASE_ADDR + 0x04);
+     DMA2_S2PAR  = (uint32_t)(USART1_BASE_ADDR + 0x04);
  8000444:	4b0c      	ldr	r3, [pc, #48]	@ (8000478 <DMA_Init+0x70>)
  8000446:	4a0d      	ldr	r2, [pc, #52]	@ (800047c <DMA_Init+0x74>)
  8000448:	601a      	str	r2, [r3, #0]
-    DMA2_S2M0AR = (uint32_t)rx_buf;
+     DMA2_S2M0AR = (uint32_t)rx_buf;
  800044a:	4b0d      	ldr	r3, [pc, #52]	@ (8000480 <DMA_Init+0x78>)
  800044c:	4a0d      	ldr	r2, [pc, #52]	@ (8000484 <DMA_Init+0x7c>)
  800044e:	601a      	str	r2, [r3, #0]
-    DMA2_S2NDTR = sizeof(rx_buf);
+     DMA2_S2NDTR = sizeof(rx_buf);
  8000450:	4b0d      	ldr	r3, [pc, #52]	@ (8000488 <DMA_Init+0x80>)
  8000452:	f44f 4200 	mov.w	r2, #32768	@ 0x8000
  8000456:	601a      	str	r2, [r3, #0]
-    DMA2_S2CR = (4 << 25) | (1 << 10) | (1 << 0); // Channel 4, MINC, EN
+     DMA2_S2CR = (4 << 25) | (1 << 10) | (1 << 0); // Channel 4, MINC, EN
  8000458:	4b05      	ldr	r3, [pc, #20]	@ (8000470 <DMA_Init+0x68>)
  800045a:	4a0c      	ldr	r2, [pc, #48]	@ (800048c <DMA_Init+0x84>)
  800045c:	601a      	str	r2, [r3, #0]
-}
+ }
  800045e:	bf00      	nop
  8000460:	370c      	adds	r7, #12
  8000462:	46bd      	mov	sp, r7
@@ -414,78 +414,78 @@ void DMA_Init(void)
 
 08000490 <USART1_IRQHandler>:
 
-void USART1_IRQHandler(void)
-{
+ void USART1_IRQHandler(void)
+ {
  8000490:	b480      	push	{r7}
  8000492:	b085      	sub	sp, #20
  8000494:	af00      	add	r7, sp, #0
-    if ((USART1_SR & (1 << 4)) != 0) // IDLE flag
+     if ((USART1_SR & (1 << 4)) != 0) // IDLE flag
  8000496:	4b1d      	ldr	r3, [pc, #116]	@ (800050c <USART1_IRQHandler+0x7c>)
  8000498:	681b      	ldr	r3, [r3, #0]
  800049a:	f003 0310 	and.w	r3, r3, #16
  800049e:	2b00      	cmp	r3, #0
  80004a0:	d02e      	beq.n	8000500 <USART1_IRQHandler+0x70>
-    {
-        volatile uint32_t temp = USART1_SR;
+     {
+         volatile uint32_t temp = USART1_SR;
  80004a2:	4b1a      	ldr	r3, [pc, #104]	@ (800050c <USART1_IRQHandler+0x7c>)
  80004a4:	681b      	ldr	r3, [r3, #0]
  80004a6:	603b      	str	r3, [r7, #0]
-        temp = USART1_DR;
+         temp = USART1_DR;
  80004a8:	4b19      	ldr	r3, [pc, #100]	@ (8000510 <USART1_IRQHandler+0x80>)
  80004aa:	681b      	ldr	r3, [r3, #0]
  80004ac:	603b      	str	r3, [r7, #0]
-        (void)temp;
+         (void)temp;
  80004ae:	683b      	ldr	r3, [r7, #0]
-        uint32_t remaining = DMA2_S2NDTR;
+         uint32_t remaining = DMA2_S2NDTR;
  80004b0:	4b18      	ldr	r3, [pc, #96]	@ (8000514 <USART1_IRQHandler+0x84>)
  80004b2:	681b      	ldr	r3, [r3, #0]
  80004b4:	60fb      	str	r3, [r7, #12]
-        uint32_t received = sizeof(rx_buf) - remaining;
+         uint32_t received = sizeof(rx_buf) - remaining;
  80004b6:	68fb      	ldr	r3, [r7, #12]
  80004b8:	f5c3 4300 	rsb	r3, r3, #32768	@ 0x8000
  80004bc:	60bb      	str	r3, [r7, #8]
-        // Chỉ chấp nhận khi nhận được tối thiểu Vector Table (ít nhất 512 bytes)
-        if (received >= 512)
+         // Chỉ chấp nhận khi nhận được tối thiểu Vector Table (ít nhất 512 bytes)
+         if (received >= 512)
  80004be:	68bb      	ldr	r3, [r7, #8]
  80004c0:	f5b3 7f00 	cmp.w	r3, #512	@ 0x200
  80004c4:	d31c      	bcc.n	8000500 <USART1_IRQHandler+0x70>
-        {
-            DMA2_S2CR &= ~(1 << 0);
+         {
+             DMA2_S2CR &= ~(1 << 0);
  80004c6:	4b14      	ldr	r3, [pc, #80]	@ (8000518 <USART1_IRQHandler+0x88>)
  80004c8:	681b      	ldr	r3, [r3, #0]
  80004ca:	4a13      	ldr	r2, [pc, #76]	@ (8000518 <USART1_IRQHandler+0x88>)
  80004cc:	f023 0301 	bic.w	r3, r3, #1
  80004d0:	6013      	str	r3, [r2, #0]
-            USART1_CR1 &= ~(1 << 4);
+             USART1_CR1 &= ~(1 << 4);
  80004d2:	4b12      	ldr	r3, [pc, #72]	@ (800051c <USART1_IRQHandler+0x8c>)
  80004d4:	681b      	ldr	r3, [r3, #0]
  80004d6:	4a11      	ldr	r2, [pc, #68]	@ (800051c <USART1_IRQHandler+0x8c>)
  80004d8:	f023 0310 	bic.w	r3, r3, #16
  80004dc:	6013      	str	r3, [r2, #0]
-            USART1_CR3 &= ~(1 << 6);
+             USART1_CR3 &= ~(1 << 6);
  80004de:	4b10      	ldr	r3, [pc, #64]	@ (8000520 <USART1_IRQHandler+0x90>)
  80004e0:	681b      	ldr	r3, [r3, #0]
  80004e2:	4a0f      	ldr	r2, [pc, #60]	@ (8000520 <USART1_IRQHandler+0x90>)
  80004e4:	f023 0340 	bic.w	r3, r3, #64	@ 0x40
  80004e8:	6013      	str	r3, [r2, #0]
-            uint32_t* ICER1 = (uint32_t*)0xE000E184;
+             uint32_t* ICER1 = (uint32_t*)0xE000E184;
  80004ea:	4b0e      	ldr	r3, [pc, #56]	@ (8000524 <USART1_IRQHandler+0x94>)
  80004ec:	607b      	str	r3, [r7, #4]
-            *ICER1 = (1 << (37 - 32));
+             *ICER1 = (1 << (37 - 32));
  80004ee:	687b      	ldr	r3, [r7, #4]
  80004f0:	2220      	movs	r2, #32
  80004f2:	601a      	str	r2, [r3, #0]
-            received_fw_size = received;
+             received_fw_size = received;
  80004f4:	4a0c      	ldr	r2, [pc, #48]	@ (8000528 <USART1_IRQHandler+0x98>)
  80004f6:	68bb      	ldr	r3, [r7, #8]
  80004f8:	6013      	str	r3, [r2, #0]
-            receive_new_fw = 1;
+             receive_new_fw = 1;
  80004fa:	4b0c      	ldr	r3, [pc, #48]	@ (800052c <USART1_IRQHandler+0x9c>)
  80004fc:	2201      	movs	r2, #1
  80004fe:	701a      	strb	r2, [r3, #0]
-        }
-    }
-}
+         }
+     }
+ }
  8000500:	bf00      	nop
  8000502:	3714      	adds	r7, #20
  8000504:	46bd      	mov	sp, r7
@@ -502,40 +502,40 @@ void USART1_IRQHandler(void)
  800052c:	20008254 	.word	0x20008254
 
 08000530 <main>:
-        *AIRCR = (0x5FA << 16) | (1 << 2);
-        while (1);
-    }
-}
-int main(void)
-{
+         *AIRCR = (0x5FA << 16) | (1 << 2);
+         while (1);
+     }
+ }
+ int main(void)
+ {
  8000530:	b580      	push	{r7, lr}
  8000532:	af00      	add	r7, sp, #0
-    USART1_Config();
+     USART1_Config();
  8000534:	f7ff ff02 	bl	800033c <USART1_Config>
-    DMA_Init();
+     DMA_Init();
  8000538:	f7ff ff66 	bl	8000408 <DMA_Init>
-    my_printf("Bootloader started! Baudrate: 115200\r\n");
+     my_printf("Bootloader started! Baudrate: 115200\r\n");
  800053c:	480d      	ldr	r0, [pc, #52]	@ (8000574 <main+0x44>)
  800053e:	f7ff fec1 	bl	80002c4 <my_printf>
-    my_printf("Waiting for Firmware_01.bin...\r\n");
+     my_printf("Waiting for Firmware_01.bin...\r\n");
  8000542:	480d      	ldr	r0, [pc, #52]	@ (8000578 <main+0x48>)
  8000544:	f7ff febe 	bl	80002c4 <my_printf>
-    while (1)
-    {
-        if (receive_new_fw == 1)
+     while (1)
+     {
+         if (receive_new_fw == 1)
  8000548:	4b0c      	ldr	r3, [pc, #48]	@ (800057c <main+0x4c>)
  800054a:	781b      	ldrb	r3, [r3, #0]
  800054c:	b2db      	uxtb	r3, r3
  800054e:	2b01      	cmp	r3, #1
  8000550:	d1fa      	bne.n	8000548 <main+0x18>
-        {
-            my_printf("Received %d bytes. Flashing...\r\n", received_fw_size);
+         {
+             my_printf("Received %d bytes. Flashing...\r\n", received_fw_size);
  8000552:	4b0b      	ldr	r3, [pc, #44]	@ (8000580 <main+0x50>)
  8000554:	681b      	ldr	r3, [r3, #0]
  8000556:	4619      	mov	r1, r3
  8000558:	480a      	ldr	r0, [pc, #40]	@ (8000584 <main+0x54>)
  800055a:	f7ff feb3 	bl	80002c4 <my_printf>
-            while (((USART1_SR >> 6) & 1) == 0); // Chờ UART TX hoàn tất
+             while (((USART1_SR >> 6) & 1) == 0); // Chờ UART TX hoàn tất
  800055e:	bf00      	nop
  8000560:	4b09      	ldr	r3, [pc, #36]	@ (8000588 <main+0x58>)
  8000562:	681b      	ldr	r3, [r3, #0]
@@ -543,9 +543,9 @@ int main(void)
  8000566:	f003 0301 	and.w	r3, r3, #1
  800056a:	2b00      	cmp	r3, #0
  800056c:	d0f8      	beq.n	8000560 <main+0x30>
-            update();
+             update();
  800056e:	f000 fd93 	bl	8001098 <__update_veneer>
-        if (receive_new_fw == 1)
+         if (receive_new_fw == 1)
  8000572:	e7e9      	b.n	8000548 <main+0x18>
  8000574:	080010a0 	.word	0x080010a0
  8000578:	080010c8 	.word	0x080010c8
@@ -2040,25 +2040,25 @@ Disassembly of section .data:
 	...
 
 20000054 <flash_unlock>:
-{
+ {
 20000054:	b480      	push	{r7}
 20000056:	af00      	add	r7, sp, #0
-    if (((FLASH_CR >> 31) & 1) == 1) {
+     if (((FLASH_CR >> 31) & 1) == 1) {
 20000058:	4b08      	ldr	r3, [pc, #32]	@ (2000007c <flash_unlock+0x28>)
 2000005a:	681b      	ldr	r3, [r3, #0]
 2000005c:	0fdb      	lsrs	r3, r3, #31
 2000005e:	f003 0301 	and.w	r3, r3, #1
 20000062:	2b01      	cmp	r3, #1
 20000064:	d105      	bne.n	20000072 <flash_unlock+0x1e>
-        FLASH_KEYR = 0x45670123;
+         FLASH_KEYR = 0x45670123;
 20000066:	4b06      	ldr	r3, [pc, #24]	@ (20000080 <flash_unlock+0x2c>)
 20000068:	4a06      	ldr	r2, [pc, #24]	@ (20000084 <flash_unlock+0x30>)
 2000006a:	601a      	str	r2, [r3, #0]
-        FLASH_KEYR = 0xCDEF89AB;
+         FLASH_KEYR = 0xCDEF89AB;
 2000006c:	4b04      	ldr	r3, [pc, #16]	@ (20000080 <flash_unlock+0x2c>)
 2000006e:	4a06      	ldr	r2, [pc, #24]	@ (20000088 <flash_unlock+0x34>)
 20000070:	601a      	str	r2, [r3, #0]
-}
+ }
 20000072:	bf00      	nop
 20000074:	46bd      	mov	sp, r7
 20000076:	f85d 7b04 	ldr.w	r7, [sp], #4
@@ -2069,18 +2069,18 @@ Disassembly of section .data:
 20000088:	cdef89ab 	.word	0xcdef89ab
 
 2000008c <flash_erase_sector>:
-{
+ {
 2000008c:	b580      	push	{r7, lr}
 2000008e:	b082      	sub	sp, #8
 20000090:	af00      	add	r7, sp, #0
 20000092:	6078      	str	r0, [r7, #4]
-    flash_unlock();
+     flash_unlock();
 20000094:	f7ff ffde 	bl	20000054 <flash_unlock>
-    if (sec_num > 7) return;
+     if (sec_num > 7) return;
 20000098:	687b      	ldr	r3, [r7, #4]
 2000009a:	2b07      	cmp	r3, #7
 2000009c:	dc3e      	bgt.n	2000011c <flash_erase_sector+0x90>
-    while (((FLASH_SR >> 16) & 1) == 1);
+     while (((FLASH_SR >> 16) & 1) == 1);
 2000009e:	bf00      	nop
 200000a0:	4b20      	ldr	r3, [pc, #128]	@ (20000124 <flash_erase_sector+0x98>)
 200000a2:	681b      	ldr	r3, [r3, #0]
@@ -2088,23 +2088,23 @@ Disassembly of section .data:
 200000a6:	f003 0301 	and.w	r3, r3, #1
 200000aa:	2b01      	cmp	r3, #1
 200000ac:	d0f8      	beq.n	200000a0 <flash_erase_sector+0x14>
-    FLASH_SR = 0xF3;
+     FLASH_SR = 0xF3;
 200000ae:	4b1d      	ldr	r3, [pc, #116]	@ (20000124 <flash_erase_sector+0x98>)
 200000b0:	22f3      	movs	r2, #243	@ 0xf3
 200000b2:	601a      	str	r2, [r3, #0]
-    FLASH_CR &= ~(0x3 << 8); // PSIZE = 00 (x8)
+     FLASH_CR &= ~(0x3 << 8); // PSIZE = 00 (x8)
 200000b4:	4b1c      	ldr	r3, [pc, #112]	@ (20000128 <flash_erase_sector+0x9c>)
 200000b6:	681b      	ldr	r3, [r3, #0]
 200000b8:	4a1b      	ldr	r2, [pc, #108]	@ (20000128 <flash_erase_sector+0x9c>)
 200000ba:	f423 7340 	bic.w	r3, r3, #768	@ 0x300
 200000be:	6013      	str	r3, [r2, #0]
-    FLASH_CR &= ~(0xF << 3);
+     FLASH_CR &= ~(0xF << 3);
 200000c0:	4b19      	ldr	r3, [pc, #100]	@ (20000128 <flash_erase_sector+0x9c>)
 200000c2:	681b      	ldr	r3, [r3, #0]
 200000c4:	4a18      	ldr	r2, [pc, #96]	@ (20000128 <flash_erase_sector+0x9c>)
 200000c6:	f023 0378 	bic.w	r3, r3, #120	@ 0x78
 200000ca:	6013      	str	r3, [r2, #0]
-    FLASH_CR |= (sec_num << 3);
+     FLASH_CR |= (sec_num << 3);
 200000cc:	4b16      	ldr	r3, [pc, #88]	@ (20000128 <flash_erase_sector+0x9c>)
 200000ce:	681a      	ldr	r2, [r3, #0]
 200000d0:	687b      	ldr	r3, [r7, #4]
@@ -2112,19 +2112,19 @@ Disassembly of section .data:
 200000d4:	4914      	ldr	r1, [pc, #80]	@ (20000128 <flash_erase_sector+0x9c>)
 200000d6:	4313      	orrs	r3, r2
 200000d8:	600b      	str	r3, [r1, #0]
-    FLASH_CR |= (1 << 1);  // SER
+     FLASH_CR |= (1 << 1);  // SER
 200000da:	4b13      	ldr	r3, [pc, #76]	@ (20000128 <flash_erase_sector+0x9c>)
 200000dc:	681b      	ldr	r3, [r3, #0]
 200000de:	4a12      	ldr	r2, [pc, #72]	@ (20000128 <flash_erase_sector+0x9c>)
 200000e0:	f043 0302 	orr.w	r3, r3, #2
 200000e4:	6013      	str	r3, [r2, #0]
-    FLASH_CR |= (1 << 16); // STRT
+     FLASH_CR |= (1 << 16); // STRT
 200000e6:	4b10      	ldr	r3, [pc, #64]	@ (20000128 <flash_erase_sector+0x9c>)
 200000e8:	681b      	ldr	r3, [r3, #0]
 200000ea:	4a0f      	ldr	r2, [pc, #60]	@ (20000128 <flash_erase_sector+0x9c>)
 200000ec:	f443 3380 	orr.w	r3, r3, #65536	@ 0x10000
 200000f0:	6013      	str	r3, [r2, #0]
-    while (((FLASH_SR >> 16) & 1) == 1);
+     while (((FLASH_SR >> 16) & 1) == 1);
 200000f2:	bf00      	nop
 200000f4:	4b0b      	ldr	r3, [pc, #44]	@ (20000124 <flash_erase_sector+0x98>)
 200000f6:	681b      	ldr	r3, [r3, #0]
@@ -2132,22 +2132,22 @@ Disassembly of section .data:
 200000fa:	f003 0301 	and.w	r3, r3, #1
 200000fe:	2b01      	cmp	r3, #1
 20000100:	d0f8      	beq.n	200000f4 <flash_erase_sector+0x68>
-    FLASH_CR &= ~(1 << 1);
+     FLASH_CR &= ~(1 << 1);
 20000102:	4b09      	ldr	r3, [pc, #36]	@ (20000128 <flash_erase_sector+0x9c>)
 20000104:	681b      	ldr	r3, [r3, #0]
 20000106:	4a08      	ldr	r2, [pc, #32]	@ (20000128 <flash_erase_sector+0x9c>)
 20000108:	f023 0302 	bic.w	r3, r3, #2
 2000010c:	6013      	str	r3, [r2, #0]
-    FLASH_CR &= ~(0xF << 3);
+     FLASH_CR &= ~(0xF << 3);
 2000010e:	4b06      	ldr	r3, [pc, #24]	@ (20000128 <flash_erase_sector+0x9c>)
 20000110:	681b      	ldr	r3, [r3, #0]
 20000112:	4a05      	ldr	r2, [pc, #20]	@ (20000128 <flash_erase_sector+0x9c>)
 20000114:	f023 0378 	bic.w	r3, r3, #120	@ 0x78
 20000118:	6013      	str	r3, [r2, #0]
 2000011a:	e000      	b.n	2000011e <flash_erase_sector+0x92>
-    if (sec_num > 7) return;
+     if (sec_num > 7) return;
 2000011c:	bf00      	nop
-}
+ }
 2000011e:	3708      	adds	r7, #8
 20000120:	46bd      	mov	sp, r7
 20000122:	bd80      	pop	{r7, pc}
@@ -2155,16 +2155,16 @@ Disassembly of section .data:
 20000128:	40023c10 	.word	0x40023c10
 
 2000012c <flash_program_byte>:
-{
+ {
 2000012c:	b580      	push	{r7, lr}
 2000012e:	b082      	sub	sp, #8
 20000130:	af00      	add	r7, sp, #0
 20000132:	6078      	str	r0, [r7, #4]
 20000134:	460b      	mov	r3, r1
 20000136:	70fb      	strb	r3, [r7, #3]
-    flash_unlock();
+     flash_unlock();
 20000138:	f7ff ff8c 	bl	20000054 <flash_unlock>
-    while (((FLASH_SR >> 16) & 1) == 1);
+     while (((FLASH_SR >> 16) & 1) == 1);
 2000013c:	bf00      	nop
 2000013e:	4b15      	ldr	r3, [pc, #84]	@ (20000194 <flash_program_byte+0x68>)
 20000140:	681b      	ldr	r3, [r3, #0]
@@ -2172,27 +2172,27 @@ Disassembly of section .data:
 20000144:	f003 0301 	and.w	r3, r3, #1
 20000148:	2b01      	cmp	r3, #1
 2000014a:	d0f8      	beq.n	2000013e <flash_program_byte+0x12>
-    FLASH_SR = 0xF3;
+     FLASH_SR = 0xF3;
 2000014c:	4b11      	ldr	r3, [pc, #68]	@ (20000194 <flash_program_byte+0x68>)
 2000014e:	22f3      	movs	r2, #243	@ 0xf3
 20000150:	601a      	str	r2, [r3, #0]
-    FLASH_CR &= ~(0x3 << 8); // PSIZE = 00 (8-bit)
+     FLASH_CR &= ~(0x3 << 8); // PSIZE = 00 (8-bit)
 20000152:	4b11      	ldr	r3, [pc, #68]	@ (20000198 <flash_program_byte+0x6c>)
 20000154:	681b      	ldr	r3, [r3, #0]
 20000156:	4a10      	ldr	r2, [pc, #64]	@ (20000198 <flash_program_byte+0x6c>)
 20000158:	f423 7340 	bic.w	r3, r3, #768	@ 0x300
 2000015c:	6013      	str	r3, [r2, #0]
-    FLASH_CR |= (1 << 0);    // PG = 1
+     FLASH_CR |= (1 << 0);    // PG = 1
 2000015e:	4b0e      	ldr	r3, [pc, #56]	@ (20000198 <flash_program_byte+0x6c>)
 20000160:	681b      	ldr	r3, [r3, #0]
 20000162:	4a0d      	ldr	r2, [pc, #52]	@ (20000198 <flash_program_byte+0x6c>)
 20000164:	f043 0301 	orr.w	r3, r3, #1
 20000168:	6013      	str	r3, [r2, #0]
-    *(volatile uint8_t*)addr = val;
+     *(volatile uint8_t*)addr = val;
 2000016a:	687b      	ldr	r3, [r7, #4]
 2000016c:	78fa      	ldrb	r2, [r7, #3]
 2000016e:	701a      	strb	r2, [r3, #0]
-    while (((FLASH_SR >> 16) & 1) == 1);
+     while (((FLASH_SR >> 16) & 1) == 1);
 20000170:	bf00      	nop
 20000172:	4b08      	ldr	r3, [pc, #32]	@ (20000194 <flash_program_byte+0x68>)
 20000174:	681b      	ldr	r3, [r3, #0]
@@ -2200,13 +2200,13 @@ Disassembly of section .data:
 20000178:	f003 0301 	and.w	r3, r3, #1
 2000017c:	2b01      	cmp	r3, #1
 2000017e:	d0f8      	beq.n	20000172 <flash_program_byte+0x46>
-    FLASH_CR &= ~(1 << 0);
+     FLASH_CR &= ~(1 << 0);
 20000180:	4b05      	ldr	r3, [pc, #20]	@ (20000198 <flash_program_byte+0x6c>)
 20000182:	681b      	ldr	r3, [r3, #0]
 20000184:	4a04      	ldr	r2, [pc, #16]	@ (20000198 <flash_program_byte+0x6c>)
 20000186:	f023 0301 	bic.w	r3, r3, #1
 2000018a:	6013      	str	r3, [r2, #0]
-}
+ }
 2000018c:	bf00      	nop
 2000018e:	3708      	adds	r7, #8
 20000190:	46bd      	mov	sp, r7
@@ -2215,13 +2215,13 @@ Disassembly of section .data:
 20000198:	40023c10 	.word	0x40023c10
 
 2000019c <update>:
-{
+ {
 2000019c:	b580      	push	{r7, lr}
 2000019e:	b082      	sub	sp, #8
 200001a0:	af00      	add	r7, sp, #0
-    __asm volatile ("cpsid i");
+     __asm volatile ("cpsid i");
 200001a2:	b672      	cpsid	i
-    if (receive_new_fw == 1 && received_fw_size > 0)
+     if (receive_new_fw == 1 && received_fw_size > 0)
 200001a4:	4b1d      	ldr	r3, [pc, #116]	@ (2000021c <update+0x80>)
 200001a6:	781b      	ldrb	r3, [r3, #0]
 200001a8:	b2db      	uxtb	r3, r3
@@ -2231,22 +2231,22 @@ Disassembly of section .data:
 200001b0:	681b      	ldr	r3, [r3, #0]
 200001b2:	2b00      	cmp	r3, #0
 200001b4:	d02d      	beq.n	20000212 <update+0x76>
-        flash_erase_sector(0);
+         flash_erase_sector(0);
 200001b6:	2000      	movs	r0, #0
 200001b8:	f7ff ff68 	bl	2000008c <flash_erase_sector>
-        if (received_fw_size > 16384) {
+         if (received_fw_size > 16384) {
 200001bc:	4b18      	ldr	r3, [pc, #96]	@ (20000220 <update+0x84>)
 200001be:	681b      	ldr	r3, [r3, #0]
 200001c0:	f5b3 4f80 	cmp.w	r3, #16384	@ 0x4000
 200001c4:	d902      	bls.n	200001cc <update+0x30>
-            flash_erase_sector(1);
+             flash_erase_sector(1);
 200001c6:	2001      	movs	r0, #1
 200001c8:	f7ff ff60 	bl	2000008c <flash_erase_sector>
-        for (uint32_t i = 0; i < received_fw_size; i++) {
+         for (uint32_t i = 0; i < received_fw_size; i++) {
 200001cc:	2300      	movs	r3, #0
 200001ce:	607b      	str	r3, [r7, #4]
 200001d0:	e00d      	b.n	200001ee <update+0x52>
-            flash_program_byte(0x08000000 + i, rx_buf[i]);
+             flash_program_byte(0x08000000 + i, rx_buf[i]);
 200001d2:	687b      	ldr	r3, [r7, #4]
 200001d4:	f103 6200 	add.w	r2, r3, #134217728	@ 0x8000000
 200001d8:	4912      	ldr	r1, [pc, #72]	@ (20000224 <update+0x88>)
@@ -2256,7 +2256,7 @@ Disassembly of section .data:
 200001e0:	4619      	mov	r1, r3
 200001e2:	4610      	mov	r0, r2
 200001e4:	f7ff ffa2 	bl	2000012c <flash_program_byte>
-        for (uint32_t i = 0; i < received_fw_size; i++) {
+         for (uint32_t i = 0; i < received_fw_size; i++) {
 200001e8:	687b      	ldr	r3, [r7, #4]
 200001ea:	3301      	adds	r3, #1
 200001ec:	607b      	str	r3, [r7, #4]
@@ -2265,23 +2265,23 @@ Disassembly of section .data:
 200001f2:	687a      	ldr	r2, [r7, #4]
 200001f4:	429a      	cmp	r2, r3
 200001f6:	d3ec      	bcc.n	200001d2 <update+0x36>
-        FLASH_CR |= (1 << 31);
+         FLASH_CR |= (1 << 31);
 200001f8:	4b0b      	ldr	r3, [pc, #44]	@ (20000228 <update+0x8c>)
 200001fa:	681b      	ldr	r3, [r3, #0]
 200001fc:	4a0a      	ldr	r2, [pc, #40]	@ (20000228 <update+0x8c>)
 200001fe:	f043 4300 	orr.w	r3, r3, #2147483648	@ 0x80000000
 20000202:	6013      	str	r3, [r2, #0]
-        uint32_t* AIRCR = (uint32_t*)(0xE000ED0C);
+         uint32_t* AIRCR = (uint32_t*)(0xE000ED0C);
 20000204:	4b09      	ldr	r3, [pc, #36]	@ (2000022c <update+0x90>)
 20000206:	603b      	str	r3, [r7, #0]
-        *AIRCR = (0x5FA << 16) | (1 << 2);
+         *AIRCR = (0x5FA << 16) | (1 << 2);
 20000208:	683b      	ldr	r3, [r7, #0]
 2000020a:	4a09      	ldr	r2, [pc, #36]	@ (20000230 <update+0x94>)
 2000020c:	601a      	str	r2, [r3, #0]
-        while (1);
+         while (1);
 2000020e:	bf00      	nop
 20000210:	e7fd      	b.n	2000020e <update+0x72>
-}
+ }
 20000212:	bf00      	nop
 20000214:	3708      	adds	r7, #8
 20000216:	46bd      	mov	sp, r7
