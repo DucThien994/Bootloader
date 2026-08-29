@@ -35,17 +35,17 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING, OCTETS
  15 .debug_rnglists 00000231  00000000  00000000  00004be0  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 16 .debug_macro  00014d33  00000000  00000000  00004e11  2**0
+ 16 .debug_macro  00014d20  00000000  00000000  00004e11  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 17 .debug_line   000035bf  00000000  00000000  00019b44  2**0
+ 17 .debug_line   0000316d  00000000  00000000  00019b31  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_str    0008285f  00000000  00000000  0001d103  2**0
+ 18 .debug_str    000827b7  00000000  00000000  0001cc9e  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .comment      00000043  00000000  00000000  0009f962  2**0
+ 19 .comment      00000043  00000000  00000000  0009f455  2**0
                   CONTENTS, READONLY
- 20 .debug_frame  00000a88  00000000  00000000  0009f9a8  2**2
+ 20 .debug_frame  000009c4  00000000  00000000  0009f498  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 21 .debug_line_str 0000008b  00000000  00000000  000a0430  2**0
+ 21 .debug_line_str 00000059  00000000  00000000  0009fe5c  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -599,7 +599,7 @@ __weak HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
     HAL_NVIC_SetPriority(SysTick_IRQn, TickPriority, 0U);
  80003ec:	2200      	movs	r2, #0
  80003ee:	6879      	ldr	r1, [r7, #4]
- 80003f0:	f04f 30ff 	mov.w	r0, #4294967295
+ 80003f0:	f04f 30ff 	mov.w	r0, #4294967295	@ 0xffffffff
  80003f4:	f000 f911 	bl	800061a <HAL_NVIC_SetPriority>
     uwTickPrio = TickPriority;
  80003f8:	4a06      	ldr	r2, [pc, #24]	@ (8000414 <HAL_InitTick+0x5c>)
@@ -692,7 +692,7 @@ __weak void HAL_Delay(uint32_t Delay)
   /* Add a freq to guarantee minimum wait */
   if (wait < HAL_MAX_DELAY)
  800046a:	68fb      	ldr	r3, [r7, #12]
- 800046c:	f1b3 3fff 	cmp.w	r3, #4294967295
+ 800046c:	f1b3 3fff 	cmp.w	r3, #4294967295	@ 0xffffffff
  8000470:	d005      	beq.n	800047e <HAL_Delay+0x26>
   {
     wait += (uint32_t)(uwTickFreq);
@@ -889,7 +889,7 @@ __STATIC_INLINE uint32_t NVIC_EncodePriority (uint32_t PriorityGroup, uint32_t P
 
   return (
            ((PreemptPriority & (uint32_t)((1UL << (PreemptPriorityBits)) - 1UL)) << SubPriorityBits) |
- 800058c:	f04f 32ff 	mov.w	r2, #4294967295
+ 800058c:	f04f 32ff 	mov.w	r2, #4294967295	@ 0xffffffff
  8000590:	69bb      	ldr	r3, [r7, #24]
  8000592:	fa02 f303 	lsl.w	r3, r2, r3
  8000596:	43da      	mvns	r2, r3
@@ -898,7 +898,7 @@ __STATIC_INLINE uint32_t NVIC_EncodePriority (uint32_t PriorityGroup, uint32_t P
  800059c:	697b      	ldr	r3, [r7, #20]
  800059e:	409a      	lsls	r2, r3
            ((SubPriority     & (uint32_t)((1UL << (SubPriorityBits    )) - 1UL)))
- 80005a0:	f04f 31ff 	mov.w	r1, #4294967295
+ 80005a0:	f04f 31ff 	mov.w	r1, #4294967295	@ 0xffffffff
  80005a4:	697b      	ldr	r3, [r7, #20]
  80005a6:	fa01 f303 	lsl.w	r3, r1, r3
  80005aa:	43d9      	mvns	r1, r3
@@ -944,7 +944,7 @@ __STATIC_INLINE uint32_t SysTick_Config(uint32_t ticks)
  80005dc:	6053      	str	r3, [r2, #4]
   NVIC_SetPriority (SysTick_IRQn, (1UL << __NVIC_PRIO_BITS) - 1UL); /* set Priority for Systick Interrupt */
  80005de:	210f      	movs	r1, #15
- 80005e0:	f04f 30ff 	mov.w	r0, #4294967295
+ 80005e0:	f04f 30ff 	mov.w	r0, #4294967295	@ 0xffffffff
  80005e4:	f7ff ff8e 	bl	8000504 <__NVIC_SetPriority>
   SysTick->VAL   = 0UL;                                             /* Load the SysTick Counter Value */
  80005e8:	4b05      	ldr	r3, [pc, #20]	@ (8000600 <SysTick_Config+0x40>)
@@ -1056,18 +1056,18 @@ uint32_t HAL_SYSTICK_Config(uint32_t TicksNumb)
 
 0800066c <__libc_init_array>:
  800066c:	b570      	push	{r4, r5, r6, lr}
- 800066e:	4d0d      	ldr	r5, [pc, #52]	@ (80006a4 <__libc_init_array+0x38>)
- 8000670:	4c0d      	ldr	r4, [pc, #52]	@ (80006a8 <__libc_init_array+0x3c>)
- 8000672:	1b64      	subs	r4, r4, r5
- 8000674:	10a4      	asrs	r4, r4, #2
+ 800066e:	4b0d      	ldr	r3, [pc, #52]	@ (80006a4 <__libc_init_array+0x38>)
+ 8000670:	4d0d      	ldr	r5, [pc, #52]	@ (80006a8 <__libc_init_array+0x3c>)
+ 8000672:	1b5b      	subs	r3, r3, r5
+ 8000674:	109c      	asrs	r4, r3, #2
  8000676:	2600      	movs	r6, #0
  8000678:	42a6      	cmp	r6, r4
  800067a:	d109      	bne.n	8000690 <__libc_init_array+0x24>
- 800067c:	4d0b      	ldr	r5, [pc, #44]	@ (80006ac <__libc_init_array+0x40>)
- 800067e:	4c0c      	ldr	r4, [pc, #48]	@ (80006b0 <__libc_init_array+0x44>)
- 8000680:	f000 f818 	bl	80006b4 <_init>
- 8000684:	1b64      	subs	r4, r4, r5
- 8000686:	10a4      	asrs	r4, r4, #2
+ 800067c:	f000 f81a 	bl	80006b4 <_init>
+ 8000680:	4d0a      	ldr	r5, [pc, #40]	@ (80006ac <__libc_init_array+0x40>)
+ 8000682:	4b0b      	ldr	r3, [pc, #44]	@ (80006b0 <__libc_init_array+0x44>)
+ 8000684:	1b5b      	subs	r3, r3, r5
+ 8000686:	109c      	asrs	r4, r3, #2
  8000688:	2600      	movs	r6, #0
  800068a:	42a6      	cmp	r6, r4
  800068c:	d105      	bne.n	800069a <__libc_init_array+0x2e>
