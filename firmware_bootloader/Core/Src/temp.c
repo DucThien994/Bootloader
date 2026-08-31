@@ -1,4 +1,3 @@
-
 // #include "main.h"
 // #include <stdio.h>
 // #include <stdint.h>
@@ -28,12 +27,24 @@
 // #define FLASH_CR                    (*(volatile uint32_t*)(FLASH_INTERFACE_BASE_ADDR + 0x10))
 // #define FLASH_SR                    (*(volatile uint32_t*)(FLASH_INTERFACE_BASE_ADDR + 0x0C))
 // #define FLASH_KEYR                  (*(volatile uint32_t*)(FLASH_INTERFACE_BASE_ADDR + 0x04))
+// #define ram_in_func                 __attribute__((section(".Function_in_Ram")))
 
 // // Đệm nhận 32 KB
 // #define RX_BUFFER_SIZE  (32 * 1024)
 // uint8_t rx_buf[RX_BUFFER_SIZE];
 // volatile uint32_t received_fw_size = 0;
 // volatile uint8_t receive_new_fw = 0;
+
+// void usart1_send(char data);
+// void my_printf(char* str, ...);
+// void USART1_Config(void);
+// void DMA_Init(void);
+// void USART1_IRQHandler(void);
+// ram_in_func void flash_unlock(void);
+// ram_in_func void flash_erase_sector(int sec_num);
+// ram_in_func void flash_program_byte(uint32_t addr, uint8_t val);
+// ram_in_func void update(void);
+
 // void usart1_send(char data)
 // {
 //     while (((USART1_SR >> 7) & 1) == 0); // Chờ TXE = 1
@@ -52,6 +63,7 @@
 //     }
 //     va_end(list);
 // }
+
 // void USART1_Config(void)
 // {
 //     // Bật clock GPIOB và USART1
@@ -75,6 +87,7 @@
 //     uint32_t* ISER1 = (uint32_t*)0xE000E104;
 //     *ISER1 |= (1 << (37 - 32));
 // }
+
 // void DMA_Init(void)
 // {
 //     RCC_AHB1ENR |= (1 << 22);
@@ -110,14 +123,16 @@
 //         }
 //     }
 // }
-// __attribute__((section(".Function_in_Ram"))) void flash_unlock(void)
+
+// ram_in_func void flash_unlock(void)
 // {
 //     if (((FLASH_CR >> 31) & 1) == 1) {
 //         FLASH_KEYR = 0x45670123;
 //         FLASH_KEYR = 0xCDEF89AB;
 //     }
 // }
-// __attribute__((section(".Function_in_Ram"))) void flash_erase_sector(int sec_num)
+
+// ram_in_func void flash_erase_sector(int sec_num)
 // {
 //     flash_unlock();
 //     if (sec_num > 7) return;
@@ -132,7 +147,8 @@
 //     FLASH_CR &= ~(1 << 1);
 //     FLASH_CR &= ~(0xF << 3);
 // }
-// __attribute__((section(".Function_in_Ram"))) void flash_program_byte(uint32_t addr, uint8_t val)
+
+// ram_in_func void flash_program_byte(uint32_t addr, uint8_t val)
 // {
 //     flash_unlock();
 //     while (((FLASH_SR >> 16) & 1) == 1);
@@ -143,7 +159,8 @@
 //     while (((FLASH_SR >> 16) & 1) == 1);
 //     FLASH_CR &= ~(1 << 0);
 // }
-// __attribute__((section(".Function_in_Ram"))) void update(void)
+
+// ram_in_func void update(void)
 // {
 //     __asm volatile ("cpsid i");
 //     if (receive_new_fw == 1 && received_fw_size > 0)
@@ -166,6 +183,7 @@
 //         while (1);
 //     }
 // }
+
 // int main(void)
 // {
 //     USART1_Config();
@@ -176,12 +194,14 @@
 //     {
 //         if (receive_new_fw == 1)
 //         {
-//             my_printf("Received %d bytes. Flashing...\r\n", received_fw_size);
-//             while (((USART1_SR >> 6) & 1) == 0); // Chờ UART TX hoàn tất
+//             // Delay ~300ms để Minicom kịp đóng popup truyền file và vẽ lại màn hình
+//             for (volatile uint32_t i = 0; i < 1000000; i++);
+
+//             my_printf("\r\nReceived %d bytes. Flashing into Flash...\r\n", received_fw_size);
+//             while (((USART1_SR >> 6) & 1) == 0); // Chờ UART TX hoàn tất (TC = 1)
+            
 //             update();
 //         }
 //     }
 //     return 0;
 // }
-
-// // =======================end ==========================================
