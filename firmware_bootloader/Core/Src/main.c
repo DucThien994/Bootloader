@@ -27,7 +27,8 @@
 #define FLASH_CR                    (*(volatile uint32_t*)(FLASH_INTERFACE_BASE_ADDR + 0x10))
 #define FLASH_SR                    (*(volatile uint32_t*)(FLASH_INTERFACE_BASE_ADDR + 0x0C))
 #define FLASH_KEYR                  (*(volatile uint32_t*)(FLASH_INTERFACE_BASE_ADDR + 0x04))
-#define ram_in_func                 __attribute__((section(".Function_in_Ram")))
+#define ram_in_func                 __attribute__((section(".Function_in_Ram"))) // định nghĩa dán nhãn để hàm chuyển lên phân vùng RAM 
+
 
 // Đệm nhận 32 KB
 #define RX_BUFFER_SIZE  (32 * 1024)
