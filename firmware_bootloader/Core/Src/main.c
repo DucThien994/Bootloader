@@ -10,35 +10,25 @@
 #define RCC_BASE_ADDR               0x40023800
 #define GPIOB_BASE_ADDR             0x40020400
 #define GPIOD_BASE_ADDR             0x40020C00
-
 #define RCC_AHB1ENR                 (*(volatile uint32_t*)(RCC_BASE_ADDR + 0x30))
 #define RCC_APB2ENR                 (*(volatile uint32_t*)(RCC_BASE_ADDR + 0x44))
-
-/* GPIOB Registers (PB6 TX, PB7 RX) */
 #define GPIOB_MODER                 (*(volatile uint32_t*)(GPIOB_BASE_ADDR + 0x00))
 #define GPIOB_OSPEEDR               (*(volatile uint32_t*)(GPIOB_BASE_ADDR + 0x08))
 #define GPIOB_PUPDR                 (*(volatile uint32_t*)(GPIOB_BASE_ADDR + 0x0C))
 #define GPIOB_AFRL                  (*(volatile uint32_t*)(GPIOB_BASE_ADDR + 0x20))
-
-/* GPIOD Registers (LED PD12..PD15) */
 #define GPIOD_MODER                 (*(volatile uint32_t*)(GPIOD_BASE_ADDR + 0x00))
 #define GPIOD_ODR                   (*(volatile uint32_t*)(GPIOD_BASE_ADDR + 0x14))
-
-/* USART1 Registers */
 #define USART1_SR                   (*(volatile uint32_t*)(USART1_BASE_ADDR + 0x00))
 #define USART1_DR                   (*(volatile uint32_t*)(USART1_BASE_ADDR + 0x04))
 #define USART1_BRR                  (*(volatile uint32_t*)(USART1_BASE_ADDR + 0x08))
 #define USART1_CR1                  (*(volatile uint32_t*)(USART1_BASE_ADDR + 0x0C))
 #define USART1_CR3                  (*(volatile uint32_t*)(USART1_BASE_ADDR + 0x14))
-
-/* DMA2 Stream 2 Registers (USART1 RX: Channel 4) */
 #define DMA2_LISR                   (*(volatile uint32_t*)(DMA2_BASE_ADDR + 0x00))
 #define DMA2_LIFCR                  (*(volatile uint32_t*)(DMA2_BASE_ADDR + 0x08))
 #define DMA2_S2CR                   (*(volatile uint32_t*)(DMA2_BASE_ADDR + 0x10 + 0x18 * 2))
 #define DMA2_S2NDTR                 (*(volatile uint32_t*)(DMA2_BASE_ADDR + 0x14 + 0x18 * 2))
 #define DMA2_S2PAR                  (*(volatile uint32_t*)(DMA2_BASE_ADDR + 0x18 + 0x18 * 2))
 #define DMA2_S2M0AR                 (*(volatile uint32_t*)(DMA2_BASE_ADDR + 0x1C + 0x18 * 2))
-
 /* Flash Interface Registers */
 #define FLASH_KEYR                  (*(volatile uint32_t*)(FLASH_INTERFACE_BASE_ADDR + 0x04))
 #define FLASH_SR                    (*(volatile uint32_t*)(FLASH_INTERFACE_BASE_ADDR + 0x0C))
@@ -48,27 +38,15 @@
 #define NVIC_ISER1                  (*(volatile uint32_t*)0xE000E104)
 #define NVIC_ICER1                  (*(volatile uint32_t*)0xE000E184)
 #define SCB_AIRCR                   (*(volatile uint32_t*)0xE000ED0C)
-
-/* ============================================================================
- * CẤU HÌNH ĐỊA CHỈ VÀ BỘ ĐỆM
- * ============================================================================
- * Firmware mới được ghi đè trực tiếp từ Sector 0 (0x08000000), sau đó chip tự động
- * System Reset để khởi động thẳng vào firmware mới, thay thế vĩnh viễn FW cũ/Bootloader.
- */
 #define APP_ADDRESS                 0x08000000
 #define ram_in_func                 __attribute__((section(".Function_in_Ram")))
-
-/* Đệm nhận Firmware 48 KB */
 #define RX_BUFFER_SIZE              (48 * 1024)
 uint8_t rx_buf[RX_BUFFER_SIZE];
-
-/* Đệm nhận lệnh điều khiển ("led on", "led off", "update") */
 #define CMD_BUF_SIZE                64
 char cmd_buf[CMD_BUF_SIZE];
 volatile uint8_t cmd_idx = 0;
 volatile uint8_t cmd_ready = 0;
 
-/* Khai báo nguyên mẫu hàm */
 void usart1_send(char data);
 void my_printf(const char* str, ...);
 void USART1_Config(void);
@@ -83,10 +61,6 @@ ram_in_func void flash_erase_for_firmware(uint32_t size);
 ram_in_func void flash_program_byte(uint32_t addr, uint8_t val);
 ram_in_func void flash_and_reset(uint32_t fw_size);
 
-/* ============================================================================
- * TRUYỀN DỮ LIỆU USART1 & HÀM PRINTF TỰ ĐỊNH NGHĨA
- * ============================================================================
- */
 void usart1_send(char data)
 {
     while (((USART1_SR >> 7) & 1) == 0); // Chờ cờ TXE = 1
@@ -106,10 +80,6 @@ void my_printf(const char* str, ...)
     va_end(list);
 }
 
-/* ============================================================================
- * CẤU HÌNH USART1 (PB6 - TX, PB7 - RX) 115200 BAUD, BẬT NGẮT RXNE
- * ============================================================================
- */
 void USART1_Config(void)
 {
     // Bật clock GPIOB (Bit 1 AHB1ENR) và USART1 (Bit 4 APB2ENR)
@@ -135,10 +105,6 @@ void USART1_Config(void)
     NVIC_ISER1 |= (1 << (37 - 32));
 }
 
-/* ============================================================================
- * CẤU HÌNH 4 LED TRÊN BOARD STM32F4 DISCOVERY (PD12, PD13, PD14, PD15)
- * ============================================================================
- */
 void LED_Init(void)
 {
     // Bật clock GPIOD (Bit 3 AHB1ENR)
@@ -152,10 +118,6 @@ void LED_Init(void)
     GPIOD_ODR &= ~(0xF << 12);
 }
 
-/* ============================================================================
- * HÀM XỬ LÝ CHUỖI: LOẠI BỎ KÝ TỰ KHOẢNG TRẮNG ĐẦU VÀ CUỐI
- * ============================================================================
- */
 void trim_str(char* str)
 {
     char* p = str;
@@ -171,10 +133,7 @@ void trim_str(char* str)
     }
 }
 
-/* ============================================================================
- * TRÌNH PHỤC VỤ NGẮT USART1: NHẬN LỆNH ĐIỀU KHIỂN
- * ============================================================================
- */
+
 void USART1_IRQHandler(void)
 {
     // Kiểm tra cờ nhận RXNE (Bit 5 trong USART1_SR)
@@ -200,11 +159,6 @@ void USART1_IRQHandler(void)
     }
 }
 
-/* ============================================================================
- * CÁC HÀM THAO TÁC FLASH VÀ RESET HỆ THỐNG (CHẠY TRÊN RAM)
- * Vì Sector 0 bị xóa và ghi đè nên các hàm này BẮT BUỘC phải nằm trên RAM (.Function_in_Ram)
- * ============================================================================
- */
 ram_in_func void flash_unlock(void)
 {
     if (((FLASH_CR >> 31) & 1) == 1) {
@@ -285,10 +239,6 @@ ram_in_func void flash_and_reset(uint32_t fw_size)
     while (1);
 }
 
-/* ============================================================================
- * QUY TRÌNH NẠP FIRMWARE MỚI KHI NHẬN LỆNH "update"
- * ============================================================================
- */
 void process_update(void)
 {
     // 1. Tắt toàn bộ ngắt để chuẩn bị update FW
@@ -297,7 +247,7 @@ void process_update(void)
     USART1_CR1 &= ~((1 << 5) | (1 << 4));  // Tắt RXNEIE, IDLEIE
 
     // 2. In thông báo yêu cầu nhập dung lượng cho Firmware mới
-    my_printf("\r\nNhap dung luong cho firmware moi (bytes): ");
+    my_printf("\r\nEnter the storage for new firmware (bytes): ");
     while (((USART1_SR >> 6) & 1) == 0);   // Chờ gửi xong chuỗi (TC = 1)
 
     // 3. Đọc dung lượng từ UART (Polling cờ RXNE vì ngắt đã tắt)
@@ -307,7 +257,7 @@ void process_update(void)
     {
         while (((USART1_SR >> 5) & 1) == 0); // Chờ RXNE = 1
         char c = (char)(USART1_DR & 0xFF);
-        usart1_send(c); // Echo ký tự để người dùng thấy trên Terminal
+        usart1_send(c);
 
         if (c == '\r' || c == '\n')
         {
@@ -342,7 +292,6 @@ void process_update(void)
         fw_size = fw_size * 10 + (size_buf[i] - '0');
     }
 
-    // Xả sạch ký tự thừa (như '\n' đi kèm '\r' nếu terminal gửi CRLF)
     for (volatile uint32_t d = 0; d < 200000; d++);
     while ((USART1_SR & (1 << 5)) != 0)
     {
@@ -361,11 +310,10 @@ void process_update(void)
         return;
     }
 
-    my_printf("\r\nDung luong nhan duoc: %lu bytes.\r\n", (unsigned long)fw_size);
-    my_printf("San sang nhan file qua UART (gui file binary ngay bay gio)...\r\n");
+    my_printf("\r\Received: %lu bytes\r\n", (unsigned long)fw_size);
+    my_printf("Ready to send new firmware by uart... \r\n");
     while (((USART1_SR >> 6) & 1) == 0);
 
-    // 4. Nhận file firmware mới bằng DMA2 Stream 2 Channel 4
     RCC_AHB1ENR |= (1 << 22); // Cấp clock cho DMA2
 
     // Tắt Stream 2 trước khi cấu hình
@@ -419,30 +367,23 @@ void process_update(void)
         return;
     }
 
-    // 6. Thông báo trước khi thực hiện ghi đè Flash và Reset
-    my_printf("\r\nDa nhan du %lu bytes thanh cong!\r\n", (unsigned long)fw_size);
-    my_printf("Dang xoa Flash Sector 0 va ghi de truc tiep tu 0x08000000...\r\n");
-    my_printf("He thong se tu dong Reset vao Firmware moi, khong the quay lai fw cu!\r\n");
-    while (((USART1_SR >> 6) & 1) == 0); // Chờ UART TX hoàn tất 100%
+    my_printf("\r\nReceived %lu bytes successfully! \r\n", (unsigned long)fw_size);
+    my_printf("Erasing Flash Sector 0 and Flash directly to 0x08000000...\r\n");
+    my_printf("The system reset and run in the new firmware. Can not run in the old firmware!\r\n");
+    while (((USART1_SR >> 6) & 1) == 0);
 
-    // 7. Thực thi hàm ghi đè Flash và Reset trên RAM
     flash_and_reset(fw_size);
 }
 
-/* ============================================================================
- * HÀM MAIN CHÍNH
- * ============================================================================
- */
 int main(void)
 {
-    // Khởi tạo các ngoại vi bằng thanh ghi
     LED_Init();
     USART1_Config();
 
-    my_printf("\r\n==========================================\r\n");
-    my_printf(" STM32F411 Bootloader Ready!\r\n");
-    my_printf(" Lenh: 'led on', 'led off', 'update'\r\n");
     my_printf("==========================================\r\n");
+    my_printf(" THIS IS FIRMWARE BOOTLOADER\r\n");
+    my_printf(" Send : 'led on', 'led off', 'update'\r\n");
+
 
     while (1)
     {
@@ -452,12 +393,12 @@ int main(void)
 
             if (strcmp(cmd_buf, "led on") == 0)
             {
-                GPIOD_ODR |= (0xF << 12); // Bật 4 LED PD12..PD15
+                GPIOD_ODR |= (0xF << 12);
                 my_printf("leds are on\r\n");
             }
             else if (strcmp(cmd_buf, "led off") == 0)
             {
-                GPIOD_ODR &= ~(0xF << 12); // Tắt 4 LED PD12..PD15
+                GPIOD_ODR &= ~(0xF << 12);
                 my_printf("leds are off\r\n");
             }
             else if (strcmp(cmd_buf, "update") == 0)
@@ -469,7 +410,6 @@ int main(void)
                 my_printf("ERROR!!! TRY AGAIN \r\n");
             }
 
-            // Xóa buffer lệnh để sẵn sàng nhận lệnh mới
             cmd_idx = 0;
             cmd_buf[0] = '\0';
             cmd_ready = 0;

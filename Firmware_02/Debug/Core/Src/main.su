@@ -1,7 +1,10 @@
-../Core/Src/main.c:317:6:LedInit	16	static
-../Core/Src/main.c:332:6:ButtonInit	16	static
-../Core/Src/main.c:346:6:ButtonState	16	static
-../Core/Src/main.c:357:6:LedCtrl	24	static
-../Core/Src/main.c:377:6:EXTI0_IRQHandler	16	static
-../Core/Src/main.c:398:6:EXTI0Init	40	static
-../Core/Src/main.c:433:5:main	8	static
+../Core/Src/main.c:89:6:delay_ms	24	static,ignoring_inline_asm
+../Core/Src/main.c:104:6:LED_Init	4	static
+../Core/Src/main.c:121:6:USART1_Config	4	static
+../Core/Src/main.c:149:6:usart1_send	16	static
+../Core/Src/main.c:155:6:my_printf	152	static
+../Core/Src/main.c:182:6:ADC1_Init	8	static
+../Core/Src/main.c:218:7:Read_temperature	24	static
+../Core/Src/main.c:244:6:TIM2_Config	4	static
+../Core/Src/main.c:270:6:TIM2_IRQHandler	4	static
+../Core/Src/main.c:289:5:main	24	static

@@ -408,7 +408,6 @@ int main(void)
     // 4. Khởi động Timer 1 (cập nhật UART 0.5s) và Timer 2 (chu kỳ 2s chạy 4 LED)
     TIM1_Config();
     TIM2_Config();
-    I3G4250D_WriteReg(I3G4250D_CTRL_REG4_ADDR, 0x02);
 
     // 5. Vòng lặp chính
     while (1)
